@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+
+</head>
+
+<body>
+	<form id="form">
+		<label for="num1">Primo addendo:</label>
+		<input type="number" id="num1">
+
+		<label for="num2">Secondo addendo:</label>
+		<input type="number" id="num2">
+
+		<input type="button" onclick="start()" value="Invia">
+	</form>
+
+	<script>
+		function start() {
+			const num1 = get_digits_rev("num1");
+			const num2 = get_digits_rev("num2");
+			const length = Math.max( num1.length, num2.length) + 1;
+
+
+			const table = new_table( 4, length, "table");
+
+			for (let j = length-1; j > 0; j--) {
+				table.rows[1].cells[j].innerHTML = check_def( num1[length-1-j] );
+				table.rows[2].cells[j].innerHTML = check_def( num2[length-1-j] );
+			}
+
+
+			let k = length-1;
+			let auto = null;
+
+			next_init();
+			document.getElementById("next").onclick = update;
+			document.getElementById("auto_next").onclick = auto_update;
+
+
+			function update() {
+				if (k < 0) {
+					return;
+				}
+				else {
+					const old_carry = Number( table.rows[0].cells[k].innerHTML );
+					const digit1 = Number( table.rows[1].cells[k].innerHTML );
+					const digit2 = Number( table.rows[2].cells[k].innerHTML );
+
+					let sum = digit1 + digit2 + old_carry;
+					let carry = Math.floor(sum / 10);
+					let units = sum - (carry*10);
+
+					if (carry != 0) {
+						table.rows[0].cells[k-1].innerHTML = carry;
+					}
+					table.rows[3].cells[k].innerHTML = units;
+
+					k--;
+				}
+			}
+
+			function auto_update() {
+				if (this.checked) {
+					auto = setInterval(update, 500);
+				}
+				else {
+					clearInterval(auto);
+				}
+			}
+		}
+
+		function next_init() {
+			if ( document.getElementById("next") ) {
+				document.getElementById("next").remove();
+			}
+			const button = document.createElement("input");
+			button.type = "button";
+			button.id = "next";
+			button.value = "Calcola";
+			//button.onclick = update;
+			document.body.appendChild(button);
+
+			document.getElementById("next").insertAdjacentHTML("afterend", "&emsp;");
+
+			if ( document.getElementById("auto_label") ) {
+				document.getElementById("auto_label").remove();
+			}
+			const label = document.createElement("label");
+			label.htmlFor = "auto_next";
+			label.id = "auto_label";
+			label.innerHTML = "Auto: ";
+			document.body.appendChild(label);
+
+			if ( document.getElementById("auto_next") ) {
+				document.getElementById("auto_next").remove();
+			}
+			const checkbox = document.createElement("input");
+			checkbox.type = "checkbox";
+			checkbox.id = "auto_next";
+			//checkbox.onclick = auto_update;
+			document.body.appendChild(checkbox);
+		}
+	</script>
+
+
+	<script>
+		function get_digits_rev(num_id) {
+			const num = document.getElementById(num_id).value;
+			let digits = num.toString().split("").map(Number);
+			return digits.reverse();
+		}
+
+		function new_table(row, col, id) {
+			if ( document.getElementById(id) ) {
+				document.getElementById(id).remove();
+			}
+			const table = document.createElement("table");
+			table.id = id;
+			table.style.width = "800px";
+			table.style.height = "200px";
+			table.style.border = "1px solid black";
+
+			for (let i = 0; i < row; i++) {
+				const tr = table.insertRow();
+				for (let j = 0; j < col; j++) {
+					const td = tr.insertCell();
+					td.appendChild(document.createTextNode(""));
+					td.style.border = "1px solid black";
+					td.align = "center";
+				}
+			}
+
+			document.body.appendChild(table);
+			return document.getElementById(id);
+		}
+
+		function check_def(x) {
+			if (x === undefined) {
+				return "";
+			}
+			else {
+				return x;
+			}
+		}
+
+
+		function hello() {
+			if (this.checked) {
+				auto = setInterval(function () {
+					console.log('hello');
+				},1000);
+			}
+			else {
+				console.log("Cleared");
+				clearInterval(auto);
+			}
+		}
+	</script>
+</body>
+</html>
