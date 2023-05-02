@@ -2,22 +2,28 @@
 
 
 struct NUMBER sum (struct NUMBER num1, struct NUMBER num2) {
+	// initialize variables
 	struct NUMBER result;
 	int l1 = num1.length, l2 = num2.length;
-	int lmax = max (num1.length, num2.length) + 1;
+	int lmax = max (num1.length, num2.length) + 1; // maximum length of the result
 
-	int* d = calloc (lmax, sizeof(int));
-	int carry = 0, c1 = 0, c2 = 0;
+	// allocate memory
+	int* d = calloc (lmax, sizeof(int)); // result digits
+
+	// calculate result digits
+	int carry = 0, c1 = 0, c2 = 0, s = 0;
 	for (int k = 0; k < lmax; k++) {
 		c1 = (k < l1) ? num1.digits[k] : 0 ; // check if it's within the boundary of the array
 		c2 = (k < l2) ? num2.digits[k] : 0 ;
 
-		int s = c1 + c2 + carry;
+		s = c1 + c2 + carry;
+
 		d[k] = get_last_digit (s);
 		carry = (int) (s / 10);
 	}
 	result.digits = d;
 
+	// calculate result length
 	int k = lmax-1;
 	while (d[k] == 0 && k >= 0) { // ignore trailing 0s (0s at the beginning of the number)
 		k--;
