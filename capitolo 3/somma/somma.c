@@ -39,8 +39,8 @@ int main (void) {
 	struct NUMBER num1, num2;
 
 	scanf ("%d%d", &n1, &n2);
-	num1 = init (n1);
-	num2 = init (n2);
+	num1 = init_NUMBER (n1);
+	num2 = init_NUMBER (n2);
 
 	struct NUMBER result = sum (num1, num2);
 	print (result);
