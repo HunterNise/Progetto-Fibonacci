@@ -45,9 +45,9 @@ int main (void) {
 	printf ("risultato: ");
 	scanf ("%d", &r);
 
-	num1 = init (n1);
-	num2 = init (n2);
-	result = init (r);
+	num1 = init_NUMBER (n1);
+	num2 = init_NUMBER (n2);
+	result = init_NUMBER (r);
 
 	int a = cast_out_9 (num1, num2, result, sel);
 	printf ("prova del 9: %d", a);
