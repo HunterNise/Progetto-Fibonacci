@@ -13,7 +13,7 @@ struct NUMBER sub (struct NUMBER num1, struct NUMBER num2) {
 	// calculate result digits
 	int borrow = 0, carry = 0, c1 = 0, c2 = 0, s = 0;
 	for (int k = 0; k < lmax; k++) {
-		c1 = (k < l1) ? num1.digits[k] : 0 ; // check if it's within the boundary of the array
+		c1 = (k < l1) ? num1.digits[k] : 0 ; // check if it's within the boundaries of the array
 		c2 = (k < l2) ? num2.digits[k] : 0 ;
 
 		borrow = (c1 < c2) ? 1 : 0; // check if borrow is needed
@@ -26,10 +26,10 @@ struct NUMBER sub (struct NUMBER num1, struct NUMBER num2) {
 
 	// calculate result length
 	int k = lmax-1;
-	while (d[k] == 0 && k >= 0) { // ignore trailing 0s (0s at the beginning of the number)
+	while (d[k] == 0 && k > 0) { // ignore trailing 0s (0s at the beginning of the number)
 		k--;
 	}
-	result.length = (k >= 0) ? k+1 : 1 ; // exception: if result = 0 then k = -1, but length should be 1
+	result.length = k+1;
 
 	return result;
 }
@@ -43,13 +43,14 @@ int main (void) {
 	num1 = init_NUMBER (n1);
 	num2 = init_NUMBER (n2);
 
-	if (n1 < n2) { // negative numbers are not contemplated
-		printf ("Impossibile eseguire la sottrazione.");
+	int verif = geq (num1, num2);
+	if (!verif) {
+		printf ("Impossibile eseguire la sottrazione."); // negative numbers are not contemplated
 		return 0;
 	}
 
 	struct NUMBER result = sub (num1, num2);
-	print (result);
+	print_NUMBER (result);
 
 
 	free (num1.digits);
@@ -57,3 +58,8 @@ int main (void) {
 	free (result.digits);
 	return 0;
 }
+
+
+
+// take two numbers, subtract them and output their difference
+// if the first number is smaller than the second one, it throws an exception
