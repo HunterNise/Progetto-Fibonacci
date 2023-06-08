@@ -5,7 +5,7 @@ struct NUMBER sum (struct NUMBER num1, struct NUMBER num2) {
 	// initialize variables
 	struct NUMBER result;
 	int l1 = num1.length, l2 = num2.length;
-	int lmax = max (num1.length, num2.length) + 1; // maximum length of the result
+	int lmax = max (l1, l2) + 1; // maximum length of the result
 
 	// allocate memory
 	int* d = calloc (lmax, sizeof(int)); // result digits
@@ -13,7 +13,7 @@ struct NUMBER sum (struct NUMBER num1, struct NUMBER num2) {
 	// calculate result digits
 	int carry = 0, c1 = 0, c2 = 0, s = 0;
 	for (int k = 0; k < lmax; k++) {
-		c1 = (k < l1) ? num1.digits[k] : 0 ; // check if it's within the boundary of the array
+		c1 = (k < l1) ? num1.digits[k] : 0 ; // check if it's within the boundaries of the array
 		c2 = (k < l2) ? num2.digits[k] : 0 ;
 
 		s = c1 + c2 + carry;
@@ -25,10 +25,10 @@ struct NUMBER sum (struct NUMBER num1, struct NUMBER num2) {
 
 	// calculate result length
 	int k = lmax-1;
-	while (d[k] == 0 && k >= 0) { // ignore trailing 0s (0s at the beginning of the number)
+	while (d[k] == 0 && k > 0) { // ignore trailing 0s (0s at the beginning of the number)
 		k--;
 	}
-	result.length = (k >= 0) ? k+1 : 1 ; // exception: if result = 0 then k = -1, but length should be 1
+	result.length = k+1;
 
 	return result;
 }
@@ -43,7 +43,7 @@ int main (void) {
 	num2 = init_NUMBER (n2);
 
 	struct NUMBER result = sum (num1, num2);
-	print (result);
+	print_NUMBER (result);
 
 
 	free (num1.digits);
@@ -51,3 +51,7 @@ int main (void) {
 	free (result.digits);
 	return 0;
 }
+
+
+
+// take two numbers, add them and output their sum
