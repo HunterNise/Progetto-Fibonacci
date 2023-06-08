@@ -5,7 +5,7 @@ struct NUMBER matrix_mult (struct NUMBER num1, struct NUMBER num2) {
 	// initialize variables
 	struct NUMBER result;
 	int l1 = num1.length, l2 = num2.length;
-	int lmax = num1.length + num2.length; // maximum length of the result
+	int lmax = l1 + l2; // maximum length of the result
 	int lrow = l1 + 1; // length of the matrix's rows
 
 	// allocate memory
@@ -14,6 +14,7 @@ struct NUMBER matrix_mult (struct NUMBER num1, struct NUMBER num2) {
 	for (int k = 0; k < l2; k++) {
 		M[k] = (int*) calloc (lrow, sizeof(int));
 	}
+
 
 	// intermediate products
 	int carry = 0, c1 = 0, c2 = 0, s = 0;
@@ -49,7 +50,7 @@ struct NUMBER matrix_mult (struct NUMBER num1, struct NUMBER num2) {
 		s = 0;
 		printf ("%d  ", carry);
 		for (int j = 0; j < l2; j++) {
-			c_j = ((k-j >= 0) && (k-j < l1+1)) ? M[j][k-j] : 0 ; // check if it's within the boundary of the array
+			c_j = ((k-j >= 0) && (k-j < l1+1)) ? M[j][k-j] : 0 ; // check if it's within the boundaries of the array
 			printf ("%d ", c_j);
 			s += c_j;
 		}
@@ -63,12 +64,13 @@ struct NUMBER matrix_mult (struct NUMBER num1, struct NUMBER num2) {
 	printf ("\n");
 	result.digits = d;
 
+
 	// calculate result length
 	int k = lmax-1;
-	while (d[k] == 0 && k >= 0) { // ignore trailing 0s (0s at the beginning of the number)
+	while (d[k] == 0 && k > 0) { // ignore trailing 0s (0s at the beginning of the number)
 		k--;
 	}
-	result.length = (k >= 0) ? k+1 : 1 ; // exception: if result = 0 then k = -1, but length should be 1
+	result.length = k+1;
 
 	// free allocated memory
 	for (int k = 0; k < l2; k++) {
@@ -88,7 +90,7 @@ int main (void) {
 	num2 = init_NUMBER (n2);
 
 	struct NUMBER result = matrix_mult (num1, num2);
-	print (result);
+	print_NUMBER (result);
 
 
 	free (num1.digits);
@@ -96,3 +98,13 @@ int main (void) {
 	free (result.digits);
 	return 0;
 }
+
+
+
+// take two numbers, multiply them and output their product
+// the multiplication is done in matrix or checkerboard style
+//   and the intermediate steps are displayed too:
+// in the first section there are the intermediate products
+// in the second section the first number is the eventual carry,
+//   followed by the digits of the intermediate products
+//   and their sum at the end
