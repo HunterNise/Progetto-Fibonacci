@@ -8,41 +8,25 @@ struct DIVresult {
 };
 
 
-void shift (struct NUMBER small, int a) {
-	int l = small.length;
-	for (int k = 0; k < l-1; k++) {
-		small.digits[k+1] = small.digits[k];
+void shift (struct NUMBER num, int a) { // shift the digits and add a new one in the units place
+	int l = num.length;
+	for (int k = l-1; k > 0; k--) {
+		num.digits[k] = num.digits[k-1];
 	}
-	small.digits[0] = a;
+	num.digits[0] = a;
 }
 
-int comp (struct NUMBER small, struct NUMBER num2) {
-	int l = small.length;
-	if (small[l-1] != 0) {
-		return 1;
-	}
-	
-	for (int k = l-2; k >= 0; k--) {
-		if (small.digits[k] > num2.digits[k]) {
-			return 1;
-		}
-		else if (small.digits[k] < num2.digits[k]) {
-			return 0;
-		}
-	}
-	return 1;
-}
-
-struct NUMBER sub (struct NUMBER num1, struct NUMBER num2, struct NUMBER result) {
+void detract (struct NUMBER* ptx_num1, struct NUMBER num2) { // detract the second number from the first
 	// initialize variables
+	struct NUMBER num1 = *ptx_num1;
 	int l1 = num1.length, l2 = num2.length;
 	int lmax = l1; // maximum length of the result
-	int* d = result.digits; // result digits
+	int* d = calloc (lmax, sizeof(int)); // result digits
 
 	// calculate result digits
 	int borrow = 0, carry = 0, c1 = 0, c2 = 0, s = 0;
 	for (int k = 0; k < lmax; k++) {
-		c1 = (k < l1) ? num1.digits[k] : 0 ; // check if it's within the boundary of the array
+		c1 = (k < l1) ? num1.digits[k] : 0 ; // check if it's within the boundaries of the array
 		c2 = (k < l2) ? num2.digits[k] : 0 ;
 
 		borrow = (c1 < c2) ? 1 : 0; // check if borrow is needed
@@ -52,67 +36,76 @@ struct NUMBER sub (struct NUMBER num1, struct NUMBER num2, struct NUMBER result)
 		carry = borrow;
 	}
 
-	return result;
+	// update digits
+	free (ptx_num1->digits);
+	ptx_num1->digits = d;
 }
 
 
-struct DIVresult div (struct NUMBER num1, struct NUMBER num2) {
+struct DIVresult division (struct NUMBER num1, struct NUMBER num2) {
 	// initialize variables
 	struct DIVresult result;
 	int l1 = num1.length, l2 = num2.length;
+	int lmax = l1; // maximum length of the result
 
 	// allocate memory
-	int* d = calloc (l1, sizeof(int)); // quotient digits
-	
-	int* rem = calloc (l1, sizeof(int)); // remainder digits
-	for (int k = 0; k < l1; k++) {
-		rem[k] = num1[k];
+	int* d = calloc (lmax, sizeof(int)); // quotient digits
+
+	int* r = calloc (lmax, sizeof(int)); // remainder digits
+	for (int k = 0; k < lmax; k++) {
+		r[k] = num1.digits[k];
 	}
 
 	struct NUMBER small;
-	small.length = l2+1;
+	small.length = l2 + 1;
 	small.digits = calloc (small.length, sizeof(int));
-	
-	
+
+
 	// calculate quotient and remainder digits
-	for (int k = l1-1; k >= 0; k--) {
-		shift (small, rem.digits[k]);
-		
+	for (int k = lmax-1; k >= 0; k--) {
+
+		shift (small, r[k]);
+
+		// this is the black box
 		int q = 0;
-		while (comp (small, num2)) {
-			small = sub (small, num2);
+		while (geq (small, num2)) {
+			detract (&small, num2);
 			q++;
 		}
-		
+
 		d[k] = q;
 		for (int j = 0; j < small.length; j++) {
-			rem.digits[k+j] = small.digits[j];
+			r[k+j] = small.digits[j];
 		}
 	}
 	result.quotient.digits = d;
-	result.rem_num.digits = rem;
-	result.rem_den.digits = num2;
+	result.rem_num.digits = r;
+	result.rem_den.digits = num2.digits;
+
 
 	// calculate quotient and remainder length
 	int k = lmax-1;
-	while (d[k] == 0 && k >= 0) { // ignore trailing 0s (0s at the beginning of the number)
+	while (d[k] == 0 && k > 0) { // ignore trailing 0s (0s at the beginning of the number)
 		k--;
 	}
-	result.quotient.length = (k >= 0) ? k+1 : 1 ; // exception: if result = 0 then k = -1, but length should be 1
-	
-	int k = lmax-1;
-	while (rem[k] == 0 && k >= 0) { // ignore trailing 0s (0s at the beginning of the number)
+	result.quotient.length = k+1;
+
+	k = lmax-1;
+	while (r[k] == 0 && k >= 0) { // ignore trailing 0s (0s at the beginning of the number)
 		k--;
 	}
-	result.rem_num.length = (k >= 0) ? k+1 : 1 ; // exception: if result = 0 then k = -1, but length should be 1
-	
+	result.rem_num.length = k+1;
+
 	result.rem_den.length = l2;
-	
+
 	return result;
 }
 
 
 int main (void) {
+	setbuf (stdout, NULL); // for buggy output
+
+
 	int n1, n2;
 	struct NUMBER num1, num2;
 
@@ -120,16 +113,22 @@ int main (void) {
 	num1 = init_NUMBER (n1);
 	num2 = init_NUMBER (n2);
 
-	struct DIVresult result = div (num1, num2);
-	print (result.rem_num);
+	struct DIVresult result = division (num1, num2);
+	print_NUMBER (result.rem_num);
 	printf ("/");
-	print (result.rem_den);
+	print_NUMBER (result.rem_den);
 	printf (" ");
-	print (result.quotient);
+	print_NUMBER (result.quotient);
 
 
 	free (num1.digits);
 	free (num2.digits);
-	free (result.digits);
+	free (result.quotient.digits);
+	free (result.rem_num.digits);
+	free (result.rem_den.digits);
 	return 0;
 }
+
+
+
+// take two numbers, divide them and output their rest (in fraction form) and the quotient
