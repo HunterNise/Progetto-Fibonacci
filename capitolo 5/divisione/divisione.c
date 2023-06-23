@@ -101,6 +101,17 @@ struct DIVresult division (struct NUMBER num1, struct NUMBER num2) {
 	return result;
 }
 
+void cast_out_9 (struct NUMBER num1, struct NUMBER num2, struct DIVresult result) {
+	int m1 = mod9 (num1), m2 = mod9 (num2), mq = mod9 (result.quotient), mr = mod9 (result.rem_num);
+	int M1 = mod9 (init_NUMBER (m2 * mq)), M2 = mod9 (init_NUMBER (M1 + mr));
+	if (M2 == m1) {
+		printf ("\n\ncorrect");
+	}
+	else {
+		printf ("\n\nwrong");
+	}
+}
+
 
 int main (void) {
 	setbuf (stdout, NULL); // for buggy output
@@ -119,6 +130,8 @@ int main (void) {
 	print_NUMBER (result.rem_den);
 	printf (" ");
 	print_NUMBER (result.quotient);
+	
+	cast_out_9 (num1, num2, result);
 
 
 	free (num1.digits);
