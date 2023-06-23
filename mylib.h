@@ -281,3 +281,21 @@ int geq (struct NUMBER num1, struct NUMBER num2) { // check if the first (struct
 	}
 	return 1;
 }
+
+int mod9 (struct NUMBER num) { // returns the number modulo 9
+	int l = num.length;
+	struct NUMBER result;
+	int s = 0;
+
+	for (int k = 0; k < l; k++) {
+		s += num.digits[k];
+	}
+	
+	result = init_NUMBER (s);
+	if (result.length > 1) {
+		return mod9 (result);
+	}
+	else {
+		return (s == 9) ? 0 : s; // 9 = 0 (mod 9)
+	}
+}
