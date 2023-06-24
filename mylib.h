@@ -19,6 +19,13 @@ int power (int b, int e) { // calculate power b^e
 }
 
 
+void print_vec (int* v, int l) {
+	for (int k = 0; k < l; k++) {
+		printf ("%d ", v[k]);
+	}
+}
+
+
 int length_int (int n) { // return the number of digits of n
 	int k = 0;
 	while (n != 0) {
@@ -80,6 +87,27 @@ int str_to_int (char* s) { // convert a string of digits to (int)
 
 
 // ____________________________________________________________________________________________________
+
+struct node { // node of a list
+	int info;
+	struct node* next;
+};
+typedef struct node* list;
+
+void add_front (list* ptx_head, int v) {
+	list new = malloc (sizeof(struct node));
+	new->info = v;
+	new->next = *ptx_head;
+	*ptx_head = new;
+}
+
+void print_rec (list head) {
+	if (!head) {
+		return;
+	}
+	printf ("%d ", head->info);
+	print_rec (head->next);
+}
 
 
 struct NUMBER { // a number broken into digits (the digits are stored in reversed order)
@@ -290,7 +318,7 @@ int mod9 (struct NUMBER num) { // returns the number modulo 9
 	for (int k = 0; k < l; k++) {
 		s += num.digits[k];
 	}
-	
+
 	result = init_NUMBER (s);
 	if (result.length > 1) {
 		return mod9 (result);
