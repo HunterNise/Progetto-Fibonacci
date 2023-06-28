@@ -36,6 +36,7 @@ struct NUMBER sum (struct NUMBER num1, struct NUMBER num2) {
 void cast_out_9 (struct NUMBER num1, struct NUMBER num2, struct NUMBER result) {
 	int m1 = mod9 (num1), m2 = mod9 (num2), mr = mod9 (result);
 	int M = mod9 (init_NUMBER (m1 + m2));
+
 	if (M == mr) {
 		printf ("\n\ncorrect");
 	}
@@ -55,7 +56,7 @@ int main (void) {
 
 	struct NUMBER result = sum (num1, num2);
 	print_NUMBER (result);
-	
+
 	cast_out_9 (num1, num2, result);
 
 
