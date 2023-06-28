@@ -17,7 +17,7 @@ void copy_rev (list head, int* v, int k) { // copy a list into a vector in rever
 }
 
 
-int factorize (int n, list* ptx_head) {
+int factorize (int n, list* ptx_head) { // calculate the prime factors and store them in a vector
 	int p = 2;
 	while (p*p <= n) { // it suffices to reach the square root
 		if (n % p == 0) {
@@ -30,9 +30,10 @@ int factorize (int n, list* ptx_head) {
 	return 1;
 }
 
-void cast_out_9 (int n, list frac) {
+void cast_out_9 (int n, list fact) {
 	int m = n % 9;
-	int M = mult(frac) % 9;
+	int M = mult(fact) % 9;
+
 	if (M == m) {
 		printf ("\n\ncorrect");
 	}
@@ -62,6 +63,7 @@ int main (void) {
 	cast_out_9 (n, fact);
 
 
+	free (v);
 	return 0;
 }
 
