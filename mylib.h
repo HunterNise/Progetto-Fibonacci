@@ -19,7 +19,7 @@ int power (int b, int e) { // calculate power b^e
 }
 
 
-void print_vec (int* v, int l) {
+void print_vec (int* v, int l) { // output the elements of the vector
 	for (int k = 0; k < l; k++) {
 		printf ("%d ", v[k]);
 	}
@@ -59,7 +59,7 @@ char* substr (char* s, int i, int j) { // return the substring between positions
 	return sub;
 }
 
-char* trim (char* s) { // deletes whitespaces
+char* trim (char* s) { // delete whitespaces
 	int l = length_str (s);
 	char* t = calloc (l, sizeof(char));
 
@@ -94,14 +94,14 @@ struct node { // node of a list
 };
 typedef struct node* list;
 
-void add_front (list* ptx_head, int v) {
+void add_front (list* ptx_head, int v) { // add an element in front of the list
 	list new = malloc (sizeof(struct node));
 	new->info = v;
 	new->next = *ptx_head;
 	*ptx_head = new;
 }
 
-void print_rec (list head) {
+void print_rec (list head) { // output the elements of the list
 	if (!head) {
 		return;
 	}
@@ -170,7 +170,7 @@ void print_FRACTION (struct FRACTION frac) {
 }
 
 
-struct multFRACTION { // a multiple fraction
+struct multFRACTION { // a multiple fraction (the numbers are stored in reversed order)
 	int* num;
 	int* den;
 	int length;
