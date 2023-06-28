@@ -1,10 +1,10 @@
 #include "../../mylib.h"
 
 
-struct DIVresult {
-	struct NUMBER quotient;
-	struct NUMBER rem_num;
-	struct NUMBER rem_den;
+struct DIVresult { // integer and fractional part
+	struct NUMBER pint;
+	struct NUMBER pfrac_num;
+	struct NUMBER pfrac_den;
 };
 
 
@@ -49,19 +49,19 @@ struct DIVresult division (struct NUMBER num1, struct NUMBER num2) {
 	int lmax = l1; // maximum length of the result
 
 	// allocate memory
-	int* d = calloc (lmax, sizeof(int)); // quotient digits
+	int* d = calloc (lmax, sizeof(int)); // integer part digits
 
-	int* r = calloc (lmax, sizeof(int)); // remainder digits
+	int* r = calloc (lmax, sizeof(int)); // fractional part digits
 	for (int k = 0; k < lmax; k++) {
 		r[k] = num1.digits[k];
 	}
 
-	struct NUMBER small;
+	struct NUMBER small; // partial dividend
 	small.length = l2 + 1;
 	small.digits = calloc (small.length, sizeof(int));
 
 
-	// calculate quotient and remainder digits
+	// calculate integer and fractional part
 	for (int k = lmax-1; k >= 0; k--) {
 
 		shift (small, r[k]);
@@ -78,32 +78,33 @@ struct DIVresult division (struct NUMBER num1, struct NUMBER num2) {
 			r[k+j] = small.digits[j];
 		}
 	}
-	result.quotient.digits = d;
-	result.rem_num.digits = r;
-	result.rem_den.digits = num2.digits;
+	result.pint.digits = d;
+	result.pfrac_num.digits = r;
+	result.pfrac_den.digits = num2.digits;
 
 
-	// calculate quotient and remainder length
+	// calculate integer and fractional part lengths
 	int k = lmax-1;
 	while (d[k] == 0 && k > 0) { // ignore trailing 0s (0s at the beginning of the number)
 		k--;
 	}
-	result.quotient.length = k+1;
+	result.pint.length = k+1;
 
 	k = lmax-1;
 	while (r[k] == 0 && k >= 0) { // ignore trailing 0s (0s at the beginning of the number)
 		k--;
 	}
-	result.rem_num.length = k+1;
+	result.pfrac_num.length = k+1;
 
-	result.rem_den.length = l2;
+	result.pfrac_den.length = l2;
 
 	return result;
 }
 
 void cast_out_9 (struct NUMBER num1, struct NUMBER num2, struct DIVresult result) {
-	int m1 = mod9 (num1), m2 = mod9 (num2), mq = mod9 (result.quotient), mr = mod9 (result.rem_num);
+	int m1 = mod9 (num1), m2 = mod9 (num2), mq = mod9 (result.pint), mr = mod9 (result.pfrac_num);
 	int M1 = mod9 (init_NUMBER (m2 * mq)), M2 = mod9 (init_NUMBER (M1 + mr));
+
 	if (M2 == m1) {
 		printf ("\n\ncorrect");
 	}
@@ -125,23 +126,23 @@ int main (void) {
 	num2 = init_NUMBER (n2);
 
 	struct DIVresult result = division (num1, num2);
-	print_NUMBER (result.rem_num);
+	print_NUMBER (result.pfrac_num);
 	printf ("/");
-	print_NUMBER (result.rem_den);
+	print_NUMBER (result.pfrac_den);
 	printf (" ");
-	print_NUMBER (result.quotient);
-	
+	print_NUMBER (result.pint);
+
 	cast_out_9 (num1, num2, result);
 
 
 	free (num1.digits);
 	free (num2.digits);
-	free (result.quotient.digits);
-	free (result.rem_num.digits);
-	free (result.rem_den.digits);
+	free (result.pint.digits);
+	free (result.pfrac_num.digits);
+	free (result.pfrac_den.digits);
 	return 0;
 }
 
 
 
-// take two numbers, divide them and output their rest (in fraction form) and the quotient
+// take two numbers, divide them and output their rest (in fraction form) and the pint
