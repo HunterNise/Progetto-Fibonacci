@@ -126,10 +126,12 @@ int main (void) {
 	num2 = init_NUMBER (n2);
 
 	struct DIVresult result = division (num1, num2);
-	print_NUMBER (result.pfrac_num);
-	printf ("/");
-	print_NUMBER (result.pfrac_den);
-	printf (" ");
+	if (result.pfrac_num.length != 0) { // don't print if there is no remainder
+		print_NUMBER (result.pfrac_num);
+		printf ("/");
+		print_NUMBER (result.pfrac_den);
+		printf (" ");	
+	}
 	print_NUMBER (result.pint);
 
 	cast_out_9 (num1, num2, result);
@@ -145,50 +147,55 @@ int main (void) {
 
 
 
-// take two numbers, divide them and output the result as a mixed number
+// divide two numbers by the standard algorithm on the digits
+// also check the result by casting out nines
+
+// INPUT: 2 numbers
+// OUTPUT: 1 mixed number, result of the division (the integer represents the quotient and the simple fraction represents the remainder)
+//         "correct" if the cast out 9 test is passed, "wrong" otherwise
 
 
 
 // examples
 
-// 365/2 = 1/2 182
+// 365 / 2 = 1/2 182
 
-// 365/3 = 2/3 121
+// 365 / 3 = 2/3 121
 
-// 1346/4 = 1/2 336
+// 1346 / 4 = 1/2 336
 
-// 5439/5 = 4/5 1087
+// 5439 / 5 = 4/5 1087
 
-// 9000/7 = 5/7 1285
+// 9000 / 7 = 5/7 1285
 
-// 10000/8 = 1250
+// 10000 / 8 = 1250
 
-// 120037/9 = 4/9 13337
+// 120037 / 9 = 4/9 13337
 
-// 12532/11 = 3/11 1139
+// 12532 / 11 = 3/11 1139
 
-// 123586/13 = 8/13 9506
-
-
-// 18456/19 = 7/19 971
-
-// 13976/23 = 15/23 607
-
-// 24059/31 = 3/31 776
-
-// 780005/59 = 25/59 13220
-
-// 5917200/97 = 6/97 61002
+// 123586 / 13 = 8/13 9506
 
 
-// 1349/257 = 64/257 5
+// 18456 / 19 = 7/19 971
 
-// 30749/307 = 49/307 100
+// 13976 / 23 = 15/23 607
 
-// 574930/563 = 107/563 1021
+// 24059 / 31 = 3/31 776
 
-// 5950000/743 = 56/743 8008
+// 780005 / 59 = 25/59 13220
 
-// 17849/1973 = 92/1973 9
+// 5917200 / 97 = 6/97 61002
 
-// 1235689/4007 = 1533/4007 308
+
+// 1349 / 257 = 64/257 5
+
+// 30749 / 307 = 49/307 100
+
+// 574930 / 563 = 107/563 1021
+
+// 5950000 / 743 = 56/743 8008
+
+// 17849 / 1973 = 92/1973 9
+
+// 1235689 / 4007 = 1533/4007 308
