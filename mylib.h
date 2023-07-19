@@ -38,6 +38,11 @@ int MCD (int a, int b) { // calculate MCD with Euclid's algorithm
 	return b; // last non 0 remainder
 }
 
+int mcm (int a, int b) { // calculate mcm
+	int d = MCD (a, b);
+	return (a * b) / d;
+}
+
 
 int length_int (int n) { // return the number of digits of n
 	int k = 0;
@@ -55,6 +60,12 @@ int get_last_digit (int num) { // return the last digit of the number
 
 void print_vec (int v[], int l) { // output the elements of the vector
 	for (int k = 0; k < l; k++) {
+		printf ("%d ", v[k]);
+	}
+}
+
+void print_vec_rev (int v[], int l) { // output the elements of the vector in reversed order
+	for (int k = l-1; k >= 0; k--) {
 		printf ("%d ", v[k]);
 	}
 }
@@ -422,7 +433,9 @@ struct mixedNUMBER { // a mixed number
 
 void print_mixedNUMBER (struct mixedNUMBER mix) {
 	print_multFRACTION (mix.pfrac);
-	printf (" %d", mix.pint);
+	if (mix.pint != 0) {
+		printf ("|%d", mix.pint);
+	}
 }
 
 
@@ -463,6 +476,7 @@ int geq (struct NUMBER num1, struct NUMBER num2) { // check if the first (struct
 	return 1;
 }
 
+
 int mod9 (struct NUMBER num) { // returns the number modulo 9
 	int l = num.length;
 	struct NUMBER result;
@@ -481,6 +495,7 @@ int mod9 (struct NUMBER num) { // returns the number modulo 9
 	}
 }
 
+
 int factorize (int n, list* ptx_head) { // calculate the prime factors and store them in a vector
 	int p = 2;
 	while (p*p <= n) { // it suffices to reach the square root
@@ -494,7 +509,11 @@ int factorize (int n, list* ptx_head) { // calculate the prime factors and store
 	return 1;
 }
 
-int* simple_den (int M) {
+int* simple_den (int M) { // beautify the denominators of a multiple fraction
+	// factors the combine up to 10 are aggregated, followed by the prime factors greater than 10
+	// the factors are stored in reversed order
+	// the array returned contain a -1 at the end as a termination character
+	
 	list denlist = NULL;
 	int l = 0;
 
@@ -518,4 +537,29 @@ int* simple_den (int M) {
 
 	free_list (denlist);
 	return denvec;
+}
+
+struct mixedNUMBER mix_div (int n1, int n2) { // divide two numbers and return a mixed number
+	// initialize variables
+	int* denvec = simple_den (n2); // array of denominators
+	int l = 0;
+	while (denvec[l] != -1) {
+		l++;
+	}
+
+	struct mixedNUMBER result;
+	result.pfrac.circle = -1;
+	result.pfrac.length = l;
+	result.pfrac.num = calloc (l, sizeof(int));
+	result.pfrac.den = denvec;
+
+	// calculate numerators
+	int m = n1;
+	for (int k = l-1; k >= 0; k--) {
+		result.pfrac.num[k] = m % result.pfrac.den[k];
+		m /= result.pfrac.den[k];
+	}
+	result.pint = m;
+
+	return result;
 }
