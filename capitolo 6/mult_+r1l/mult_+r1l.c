@@ -1,4 +1,4 @@
-#include "../../../mylib.h"
+#include "../../mylib.h"
 
 
 struct MIXNUM { // a mixed number
@@ -152,6 +152,9 @@ int main (void) {
 
 
 // multiplicate two mixed numbers
+
+// INPUT: 2 strings that represent mixed numbers with a multiple fraction
+// OUTPUT: 1 mixed number, result of the multiplication
 
 
 
