@@ -8,28 +8,6 @@ int mult (list head) { // multiply the elements of a list
 	return mult(head->next) * head->info;
 }
 
-void copy_rev (list head, int* v, int k) { // copy a list into a vector in reversed order
-	if (!head) {
-		return;
-	}
-	v[k] = head->info;
-	copy_rev (head->next, v, k-1);
-}
-
-
-int factorize (int n, list* ptx_head) { // calculate the prime factors and store them in a vector
-	int p = 2;
-	while (p*p <= n) { // it suffices to reach the square root
-		if (n % p == 0) {
-			add_front (ptx_head, p);
-			return factorize (n/p, ptx_head) + 1;
-		}
-		p++;
-	}
-	add_front (ptx_head, n);
-	return 1;
-}
-
 void cast_out_9 (int n, list fact) {
 	int m = n % 9;
 	int M = mult(fact) % 9;
@@ -54,7 +32,7 @@ int main (void) {
 	list fact = NULL; // list of prime factors (stored in descending order)
 	int l = factorize (n, &fact);
 	int* v = calloc (l, sizeof(int)); // vector of prime factors (stored in ascending order)
-	copy_rev (fact, v, l-1);
+	copy_rev (fact, v);
 
 	printf ("%d", n);
 	printf (" = ");
@@ -70,3 +48,36 @@ int main (void) {
 
 
 // take a number and find his prime factors
+
+
+
+// examples
+
+// 805 = 5×7×23
+
+// 957 = 3×11×29
+
+// 951 = 3×317
+
+// 873 = 9x97
+
+// 1469 = 13×113
+
+// 2543 primo
+
+// 624481 = 11×11×13×397
+
+// 126 = 2×7×9
+
+// 2112 = 4×6×8×11 =
+//      = 3×8×8×11
+
+// 4664 = 8×11×53
+
+// 13652 = 4×3413
+
+// 15560 = 4×10×389
+
+// 32600 = 2×10×10×163
+
+// 7546000 = 2×7×7×7×10×10×10×11
