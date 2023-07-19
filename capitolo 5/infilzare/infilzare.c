@@ -23,4 +23,24 @@ int main (void) {
 
 
 
-// convert a (struct multFRACTION) to a (struct FRACTION)
+// convert a multiple fraction to a simple fraction
+
+// INPUT: 1 string that encode a multiple fraction
+// OUTPUT: the simple fraction
+
+
+
+// examples
+
+// 1,4/2,7 = 9/14
+
+// 1,0/2,7 = 1/14
+
+// 1,5,7/2,6,10 = 95/120
+//              = 19/24
+
+// 2,4,6,8/3,5,7,9o = 2520/945
+//                  = 8/3
+
+// o8,6,4,2/9,7,5,3 = 384/945
+//                  = 128/315
