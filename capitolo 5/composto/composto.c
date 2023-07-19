@@ -1,49 +1,21 @@
 #include "../../mylib.h"
 
 
-struct DIVresult {
-	struct multFRACTION pfrac; // fractional part
-	int pint; // integer part
-};
-
-
-void copy (list head, int* v, int k) { // copy a list into a vector
-	if (!head) {
-		return;
-	}
-	v[k] = head->info;
-	copy (head->next, v, k+1);
-}
-
-
-int factorize (int n, list* ptx_head) { // calculate the prime factors and store them in a vector
-	int p = 2;
-	while (p*p <= n) { // it suffices to reach the square root
-		if (n % p == 0) {
-			add_front (ptx_head, p);
-			return factorize (n/p, ptx_head) + 1;
-		}
-		p++;
-	}
-	add_front (ptx_head, n);
-	return 1;
-}
-
-
-struct DIVresult division (int n1, int n2) {
+struct mixedNUMBER division (int n1, int n2) {
 	// initialize variables
 	list fact = NULL; // list of prime factors (stored in descending order)
 	int l = factorize (n2, &fact);
 
-	struct DIVresult result;
+	struct mixedNUMBER result;
 	result.pfrac.circle = -1;
 	result.pfrac.length = l;
 	result.pfrac.num = calloc (l, sizeof(int));
 	result.pfrac.den = calloc (l, sizeof(int));
+	
 	result.pint = 0;
-	copy (fact, result.pfrac.den, 0);
+	copy (fact, result.pfrac.den);
 
-	// calculate result digits
+	// calculate numerators
 	int m = n1;
 	for (int k = l-1; k >= 0; k--) {
 		result.pfrac.num[k] = m % result.pfrac.den[k];
@@ -54,7 +26,7 @@ struct DIVresult division (int n1, int n2) {
 	return result;
 }
 
-void cast_out_X (int n1, struct DIVresult result) {
+void cast_out_X (int n1, struct mixedNUMBER result) {
 	// initialize variables
 	int l = result.pfrac.length;
 	int* primes = calloc (l, sizeof(int));
@@ -123,9 +95,8 @@ int main (void) {
 
 	scanf ("%d%d", &n1, &n2);
 
-	struct DIVresult result = division (n1, n2);
-	print_multFRACTION (result.pfrac);
-	printf (" %d", result.pint);
+	struct mixedNUMBER result = division (n1, n2);
+	print_mixedNUMBER (result);
 
 	cast_out_X (n1, result);
 
@@ -138,3 +109,16 @@ int main (void) {
 
 
 // divide by a composite number by finding his prime factors
+
+
+
+// examples
+
+// 749/75 = 2,4,4/3,5,5;9
+// 75 = 3×5×5
+
+// 67898/1760 = 0,5,3,6/2,8,10,11;38
+// 1760 = 2×8×10×11
+
+// 81540/8190 = 3,12/7,13;9
+// 8190 = 7x9x10x13
