@@ -1,4 +1,4 @@
-#include "../../../mylib.h"
+#include "../../mylib.h"
 
 
 struct MIXNUM { // a mixed number
@@ -18,7 +18,7 @@ struct MIXNUM init_MIXNUM (char s[]) {
 	
 	int mFN = 1; // number of multFRACTION
 	
-	for (int k = 0; s[k] != '\0'; k++) {
+	for (int k = 0; s[k] != '\0'; k++) { // count the number of multiple fractions
 		switch (s[k]) {
 			case ';': {
 				mFN++;
@@ -160,26 +160,26 @@ struct mixedNUMBER mult (struct MIXNUM mix1, struct MIXNUM mix2) {
 	// initialize variables
 	int N1 = numTOT (mix1), N2 = numTOT (mix2);
 	int N = N1 * N2;
-	printf ("%d %d\n", N1, N2);
+	/* printf ("%d %d\n", N1, N2); */
 	
 	int M = 1;
-	printf ("\nmFN = %d", mix1.mFN);
+	/* printf ("\nmFN = %d", mix1.mFN); */
 	for (int j = 0; j < mix1.mFN; j++) {
-		printf ("\nl = %d, ", mix1.pfrac[j].length);
+		/* printf ("\nl = %d, ", mix1.pfrac[j].length); */
 		for (int k = 0; k < mix1.pfrac[j].length; k++) {
 			M *= mix1.pfrac[j].den[k];
-			printf ("%d ", mix1.pfrac[j].den[k]);
+			/* printf ("%d ", mix1.pfrac[j].den[k]); */
 		}
 	}
-	printf ("\nmFN = %d", mix2.mFN);
+	/* printf ("\nmFN = %d", mix2.mFN); */
 	for (int j = 0; j < mix2.mFN; j++) {
-		printf ("\nl = %d, ", mix2.pfrac[j].length);
+		/* printf ("\nl = %d, ", mix2.pfrac[j].length); */
 		for (int k = 0; k < mix2.pfrac[j].length; k++) {
 			M *= mix2.pfrac[j].den[k];
-			printf ("%d ", mix2.pfrac[j].den[k]);
+			/* printf ("%d ", mix2.pfrac[j].den[k]); */
 		}
 	}
-	printf ("\nM = %d\n", M);
+	/* printf ("\nM = %d\n", M); */
 	
 	int* denvec = simple_den (M); // array of denominators
 	int l = 0;
@@ -217,7 +217,7 @@ int main (void) {
 	mix2 = init_MIXNUM (s2);
 	
 	
-	printf ("\n");
+	/* printf ("\n");
 	for (int j = mix1.mFN-1; j >= 0; j--) {
 		print_multFRACTION (mix1.pfrac[j]);
 		printf (" ");
@@ -228,7 +228,7 @@ int main (void) {
 		printf (" ");
 	}
 	printf ("%d\n", mix2.pint);
-	printf ("\n");
+	printf ("\n"); */
 	
 	
 	struct mixedNUMBER result = mult (mix1, mix2);
@@ -252,6 +252,9 @@ int main (void) {
 
 
 // multiplicate two mixed numbers
+
+// INPUT: 2 strings that represent mixed numbers with an arbitrary number of multiple fractions
+// OUTPUT: 1 mixed number, result of the multiplication
 
 
 
