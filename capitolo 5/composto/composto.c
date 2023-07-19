@@ -1,58 +1,38 @@
 #include "../../mylib.h"
 
 
-struct mixedNUMBER division (int n1, int n2) {
-	// initialize variables
-	list fact = NULL; // list of prime factors (stored in descending order)
-	int l = factorize (n2, &fact);
-
-	struct mixedNUMBER result;
-	result.pfrac.circle = -1;
-	result.pfrac.length = l;
-	result.pfrac.num = calloc (l, sizeof(int));
-	result.pfrac.den = calloc (l, sizeof(int));
-	
-	result.pint = 0;
-	copy (fact, result.pfrac.den);
-
-	// calculate numerators
-	int m = n1;
-	for (int k = l-1; k >= 0; k--) {
-		result.pfrac.num[k] = m % result.pfrac.den[k];
-		m /= result.pfrac.den[k];
-	}
-	result.pint = m;
-
-	return result;
-}
-
 void cast_out_X (int n1, struct mixedNUMBER result) {
 	// initialize variables
 	int l = result.pfrac.length;
-	int* primes = calloc (l, sizeof(int));
-	int verif, isprime, k = 0, p = 7;
+	int* primes = calloc (l, sizeof(int)); // store primes (dynamic programming)
+	int verif, isprime, j = 0, p = 7; // verif = flag controlling the termination of the cycle, isprime = flag checking whether p is prime, j = primes counter (gives position of last encountered prime), p = current prime (start from 7)
 
 	// find a prime number different from the denominators
-	while (1) {
+	for ( ; 1 ; p++) { // infinite cycle (until broken); at each iteration p gets incremented
 		isprime = 1;
-		for (int j = 0; j < k; j++) {
-			if (p % primes[j] == 0) {
+		if ((p % 2 == 0) || (p % 3 == 0) || (p % 5 == 0)) { // check divisibility by 2,3,5
+			isprime = 0;
+			continue;
+		}
+		for (int k = 0; k < j; k++) { // check divisibility by all other smaller primes
+			if (p % primes[k] == 0) {
 				isprime = 0;
 				break;
 			}
 		}
 
 		if (isprime == 1) {
-			if (k == l) {
+			if (j == l) { // checked as many primes as the number of denominators
 				break;
 			}
 
+			// check p is already in the denominators
 			verif = 1;
-			for (int j = 0; j < l; j++) {
-				if (p == result.pfrac.den[j]) {
+			for (int k = 0; k < l; k++) {
+				if (p == result.pfrac.den[k]) {
 					verif = 0;
-					primes[k] = p;
-					k++;
+					primes[j] = p;
+					j++;
 					break;
 				}
 			}
@@ -61,15 +41,13 @@ void cast_out_X (int n1, struct mixedNUMBER result) {
 				break;
 			}
 		}
-
-		p++;
 	}
 
 	// calculate remainders
 	int m1 = n1 % p, mr = result.pint % p;
-	for (int j = 0; j < l; j++) {
-		mr *= result.pfrac.den[j];
-		mr += result.pfrac.num[j];
+	for (int k = 0; k < l; k++) {
+		mr *= result.pfrac.den[k];
+		mr += result.pfrac.num[k];
 		mr = mr % p;
 	}
 
@@ -95,7 +73,7 @@ int main (void) {
 
 	scanf ("%d%d", &n1, &n2);
 
-	struct mixedNUMBER result = division (n1, n2);
+	struct mixedNUMBER result = mix_div (n1, n2);
 	print_mixedNUMBER (result);
 
 	cast_out_X (n1, result);
@@ -103,22 +81,28 @@ int main (void) {
 
 	free (result.pfrac.num);
 	free (result.pfrac.den);
+	fflush (stdout); // for buggy output
 	return 0;
 }
 
 
 
 // divide by a composite number by finding his prime factors
+// also check the result by casting out a prime number that is not already present in the factors of the denominator
+
+// INPUT: 2 numbers
+// OUTPUT: 1 mixed number, result of the division
+//         the result of casting out and the modulo chosen
 
 
 
 // examples
 
-// 749/75 = 2,4,4/3,5,5;9
-// 75 = 3×5×5
+// 749 / 75 = 2,4,4/3,5,5|9
+//       75 = 3×5×5
 
-// 67898/1760 = 0,5,3,6/2,8,10,11;38
-// 1760 = 2×8×10×11
+// 67898 / 1760 = 0,5,3,6/2,8,10,11|38
+//         1760 = 2×8×10×11
 
-// 81540/8190 = 3,12/7,13;9
-// 8190 = 7x9x10x13
+// 81540 / 8190 = 3,12/7,13|9
+//         8190 = 7x9x10x13
