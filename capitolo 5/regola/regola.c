@@ -1,16 +1,13 @@
 #include "../../mylib.h"
 
 
-int mult (list head) { // multiply the elements of a list
-	if (!head) {
-		return 1;
-	}
-	return mult(head->next) * head->info;
-}
-
-void cast_out_9 (int n, list fact) {
+void cast_out_9 (int n, int* denvec, int l) {
 	int m = n % 9;
-	int M = mult(fact) % 9;
+	int M = 1;
+	for (int k = 0; k < l; k++) {
+		M *= denvec[k];
+		M = M % 9;
+	}
 
 	if (M == m) {
 		printf ("\n\ncorrect");
@@ -29,25 +26,32 @@ int main (void) {
 
 	scanf ("%d", &n);
 
-	list fact = NULL; // list of prime factors (stored in descending order)
-	int l = factorize (n, &fact);
-	int* v = calloc (l, sizeof(int)); // vector of prime factors (stored in ascending order)
-	copy_rev (fact, v);
-
+	int* denvec = simple_den (n); // array of denominators
+	int l = 0;
+	while (denvec[l] != -1) {
+		l++;
+	}
+	
 	printf ("%d", n);
 	printf (" = ");
-	print_vec (v, l);
+	print_vec_rev (denvec, l);
 
-	cast_out_9 (n, fact);
+	cast_out_9 (n, denvec, l);
 
 
-	free (v);
+	free (denvec);
 	return 0;
 }
 
 
 
-// take a number and find his prime factors
+// find the "rule" of a number
+// this is equivalent to finding his prime factors (and beautify the factors)
+// also check the result by casting out nines
+
+// INPUT: 1 number
+// OUTPUT: the sequence of factors
+//         "correct" if the cast out 9 test is passed, "wrong" otherwise
 
 
 
