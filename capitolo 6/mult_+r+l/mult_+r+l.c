@@ -216,7 +216,6 @@ int main (void) {
 	mix1 = init_MIXNUM (s1);
 	mix2 = init_MIXNUM (s2);
 	
-	
 	/* printf ("\n");
 	for (int j = mix1.mFN-1; j >= 0; j--) {
 		print_multFRACTION (mix1.pfrac[j]);
@@ -229,7 +228,6 @@ int main (void) {
 	}
 	printf ("%d\n", mix2.pint);
 	printf ("\n"); */
-	
 	
 	struct mixedNUMBER result = mult (mix1, mix2);
 	print_mixedNUMBER (result);
@@ -255,6 +253,8 @@ int main (void) {
 
 // INPUT: 2 strings that represent mixed numbers with an arbitrary number of multiple fractions
 // OUTPUT: 1 mixed number, result of the multiplication
+
+// WARNING: due to the algorithm implementation it is easy to run in overflow if the fractions have too many denominators (and/or too big)
 
 
 
