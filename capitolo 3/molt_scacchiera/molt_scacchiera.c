@@ -8,6 +8,17 @@ struct NUMBER matrix_mult (struct NUMBER num1, struct NUMBER num2) {
 	int lmax = l1 + l2; // maximum length of the result
 	int lrow = l1 + 1; // length of the matrix's rows
 
+	for (int k = 0; k < lmax-l1-1; k++) {
+		printf ("0");
+	}
+	print_NUMBER (num1);
+	printf ("\n");
+	for (int k = 0; k < lmax-l2-1; k++) {
+		printf ("0");
+	}
+	print_NUMBER (num2);
+	printf ("\n\n");
+
 	// allocate memory
 	int* d = calloc (lmax, sizeof(int)); // result digits
 	int** M = (int**) calloc (l2, sizeof(int*)); // matrix of intermediate products
@@ -17,9 +28,8 @@ struct NUMBER matrix_mult (struct NUMBER num1, struct NUMBER num2) {
 
 
 	// intermediate products
-	int carry = 0, c1 = 0, c2 = 0, s = 0;
+	int carry = 0, c1 = 0, c2 = 0, s = 0; // c1 = current digit of the first number (idem c2 for the second one), s = partial sum of products of current digits plus the carry
 	for (int j = 0; j < l2; j++) {
-
 		carry = 0;
 		for (int i = 0; i < lrow; i++) {
 			c1 = (i < l1) ? num1.digits[i] : 0 ; // check if it's within the boundary of the array
@@ -32,7 +42,6 @@ struct NUMBER matrix_mult (struct NUMBER num1, struct NUMBER num2) {
 		}
 	}
 
-	printf ("\n");
 	for (int j = 0; j < l2; j++) {
 		for (int i = lrow-1; i >= 0; i--) {
 			printf ("%d", M[j][i]);
@@ -43,10 +52,9 @@ struct NUMBER matrix_mult (struct NUMBER num1, struct NUMBER num2) {
 
 
 	// diagonal sum
-	int c_j = 0;
+	int c_j = 0; // current digit
 	carry = 0;
 	for (int k = 0; k < lmax; k++) {
-
 		s = 0;
 		printf ("%d  ", carry);
 		for (int j = 0; j < l2; j++) {
@@ -61,7 +69,6 @@ struct NUMBER matrix_mult (struct NUMBER num1, struct NUMBER num2) {
 		carry = (int) (s / 10);
 		printf ("\n");
 	}
-	printf ("\n");
 	result.digits = d;
 
 
@@ -77,48 +84,79 @@ struct NUMBER matrix_mult (struct NUMBER num1, struct NUMBER num2) {
 		free (M[k]);
 	}
 	free (M);
+
 	return result;
 }
 
-void cast_out_9 (struct NUMBER num1, struct NUMBER num2, struct NUMBER result) {
-	int m1 = mod9 (num1), m2 = mod9 (num2), mr = mod9 (result);
-	int M = mod9 (init_NUMBER (m1 * m2));
+void cast_out_9 (struct NUMBER num1, struct NUMBER num2, struct NUMBER result) { // check the correctness of the operation by casting out nines
+	int m1 = mod9 (num1),
+	    m2 = mod9 (num2),
+		mr = mod9 (result);
+	int M = (m1 * m2) % 9;
 
+	int n1 = NUMBER_to_int (num1),
+	    n2 = NUMBER_to_int (num2),
+		nr = NUMBER_to_int (result);
+	printf ("%d %% 9 = %d\n", n1, m1);
+	printf ("%d %% 9 = %d\n", n2, m2);
+	printf ("%d %% 9 = %d\n", nr, mr);
+
+	printf ("\n");
 	if (M == mr) {
-		printf ("\n\ncorrect");
+		printf ("correct");
 	}
 	else {
-		printf ("\n\nwrong");
+		printf ("wrong");
 	}
 }
 
 
 int main (void) {
+	// initialize variables
 	int n1, n2;
 	struct NUMBER num1, num2;
 
 	scanf ("%d%d", &n1, &n2);
 	num1 = init_NUMBER (n1);
 	num2 = init_NUMBER (n2);
+	printf ("\n----------\n\n");
 
-	struct NUMBER result = matrix_mult (num1, num2);
+	// call functions
+	struct NUMBER result;
+	result = matrix_mult (num1, num2);
+	printf ("\n");
 	print_NUMBER (result);
+	printf ("\n\n----------\n\n");
 
 	cast_out_9 (num1, num2, result);
 
 
+	// free memory
 	free (num1.digits);
 	free (num2.digits);
 	free (result.digits);
+
 	return 0;
 }
 
 
 
-// take two numbers, multiply them and output their product
-// the multiplication is done in matrix or checkerboard style
-//   and the intermediate steps are displayed too:
-// in the first section there are the intermediate products
-// in the second section the first number is the eventual carry,
-//   followed by the digits of the intermediate products
-//   and their sum at the end
+// multiply two numbers in matrix or checkerboard style
+// also check the result by casting out nines
+
+// INPUT: 2 numbers
+// OUTPUT: the steps of the multiplication *
+//         1 number, result of the operation
+//         the remainders by 9
+//         the result of casting out nines ("correct" or "wrong")
+
+// * in the first section there are the intermediate products
+//   in the second section the first number is the eventual carry,
+//     followed by the digits of the intermediate products
+//     and their sum at the end
+
+
+// examples
+
+
+// 4321 x 567 = 2450007
