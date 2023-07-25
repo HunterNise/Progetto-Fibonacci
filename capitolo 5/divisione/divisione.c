@@ -1,10 +1,10 @@
 #include "../../mylib.h"
 
 
-struct DIVresult { // integer and fractional part
-	struct NUMBER pint;
-	struct NUMBER pfrac_num;
-	struct NUMBER pfrac_den;
+struct DIVresult { // integer and fractional parts
+	struct NUMBER pint; // integer part
+	struct NUMBER pfrac_num; // numerators
+	struct NUMBER pfrac_den; // denominators
 };
 
 
@@ -16,15 +16,15 @@ void shift (struct NUMBER num, int a) { // shift the digits and add a new one in
 	num.digits[0] = a;
 }
 
-void detract (struct NUMBER* ptx_num1, struct NUMBER num2) { // detract the second number from the first
+void detract (struct NUMBER* ptx_num1, struct NUMBER num2) { // detract the second number from the first [see sottrazione.c]
 	// initialize variables
 	struct NUMBER num1 = *ptx_num1;
-	int l1 = num1.length, l2 = num2.length;
+	int l1 = num1.length,	    l2 = num2.length;
 	int lmax = l1; // maximum length of the result
 	int* d = calloc (lmax, sizeof(int)); // result digits
 
 	// calculate result digits
-	int borrow = 0, carry = 0, c1 = 0, c2 = 0, s = 0;
+	int borrow = 0, carry = 0, c1 = 0, c2 = 0, s = 0; // c1 = current digit of the first number (idem c2 for the second one), s = partial difference of current digits (included the carry)
 	for (int k = 0; k < lmax; k++) {
 		c1 = (k < l1) ? num1.digits[k] : 0 ; // check if it's within the boundaries of the array
 		c2 = (k < l2) ? num2.digits[k] : 0 ;
@@ -45,8 +45,18 @@ void detract (struct NUMBER* ptx_num1, struct NUMBER num2) { // detract the seco
 struct DIVresult division (struct NUMBER num1, struct NUMBER num2) {
 	// initialize variables
 	struct DIVresult result;
-	int l1 = num1.length, l2 = num2.length;
+	int l1 = num1.length,	    l2 = num2.length;
 	int lmax = l1; // maximum length of the result
+
+		for (int k = 0; k < lmax-l1; k++) {
+			printf ("0");
+		}
+		print_NUMBER (num1);	printf ("\n");
+		for (int k = 0; k < lmax-l2; k++) {
+			printf ("0");
+		}
+		print_NUMBER (num2);	printf ("\n");
+		printf ("\n");
 
 	// allocate memory
 	int* d = calloc (lmax, sizeof(int)); // integer part digits
@@ -61,29 +71,30 @@ struct DIVresult division (struct NUMBER num1, struct NUMBER num2) {
 	small.digits = calloc (small.length, sizeof(int));
 
 
-	// calculate integer and fractional part
+	// calculate integer and fractional parts
 	for (int k = lmax-1; k >= 0; k--) {
 
-		shift (small, r[k]);
+		shift (small, r[k]); // add the next digit
+			print_NUMBER (small);	printf (" - ");
 
 		// this is the black box
 		int q = 0;
-		while (geq (small, num2)) {
+		while (geq (small, num2)) { // division between small and num2
 			detract (&small, num2);
 			q++;
 		}
+			print_NUMBER (num2);   printf (" * %d = ", q);   print_NUMBER (small);   printf ("\n");
 
 		d[k] = q;
 		for (int j = 0; j < small.length; j++) {
 			r[k+j] = small.digits[j];
 		}
 	}
-	result.pint.digits = d;
+	result.pint.digits 		= d;
 	result.pfrac_num.digits = r;
 	result.pfrac_den.digits = num2.digits;
 
-
-	// calculate integer and fractional part lengths
+	// calculate integer and fractional parts lengths
 	int k = lmax-1;
 	while (d[k] == 0 && k > 0) { // ignore trailing 0s (0s at the beginning of the number)
 		k--;
@@ -98,19 +109,26 @@ struct DIVresult division (struct NUMBER num1, struct NUMBER num2) {
 
 	result.pfrac_den.length = l2;
 
+
+	// free memory
+	free (small.digits);
+
 	return result;
 }
 
-void cast_out_9 (struct NUMBER num1, struct NUMBER num2, struct DIVresult result) {
-	int m1 = mod9 (num1), m2 = mod9 (num2), mq = mod9 (result.pint), mr = mod9 (result.pfrac_num);
-	int M1 = mod9 (init_NUMBER (m2 * mq)), M2 = mod9 (init_NUMBER (M1 + mr));
+void cast_out_9 (struct NUMBER num1, struct NUMBER num2, struct DIVresult result) { // check the correctness of the operation by casting out nines
+	// calculate remainders
+	int m1 = mod9 (num1),	    m2 = mod9 (num2),	    mq = mod9 (result.pint), // quotient	    mr = mod9 (result.pfrac_num); // remainder
+	int M1 = (m2 * mq) % 9,	    M2 = (M1 + mr) % 9;
 
-	if (M2 == m1) {
-		printf ("\n\ncorrect");
-	}
-	else {
-		printf ("\n\nwrong");
-	}
+	// output
+		print_NUMBER (num1);				printf (" %% 9 = %d\n", m1);
+		print_NUMBER (num2);				printf (" %% 9 = %d\n", m2);
+		print_NUMBER (result.pint);			printf (" %% 9 = %d\n", mq);
+		print_NUMBER (result.pfrac_num);	printf (" %% 9 = %d\n", mr);
+
+		printf ("\n");
+		printf ( (M2 == m1) ? "correct" : "wrong");
 }
 
 
@@ -118,45 +136,57 @@ int main (void) {
 	setbuf (stdout, NULL); // for buggy output
 
 
+	// initialize variables
 	int n1, n2;
 	struct NUMBER num1, num2;
 
 	scanf ("%d%d", &n1, &n2);
 	num1 = init_NUMBER (n1);
 	num2 = init_NUMBER (n2);
+		printf ("\n----------\n\n");
 
-	struct DIVresult result = division (num1, num2);
-	if (result.pfrac_num.length != 0) { // don't print if there is no remainder
-		print_NUMBER (result.pfrac_num);
-		printf ("/");
-		print_NUMBER (result.pfrac_den);
-		printf (" ");	
-	}
-	print_NUMBER (result.pint);
+	// call functions
+	struct DIVresult result;
+	result = division (num1, num2);
+
+		printf ("\n");
+		if (result.pfrac_num.length != 0) { // don't print fractional part if there is no remainder
+			print_NUMBER (result.pfrac_num);	printf ("/");
+			print_NUMBER (result.pfrac_den);	printf (" ");
+		}
+		print_NUMBER (result.pint);
+		printf ("\n\n----------\n\n");
 
 	cast_out_9 (num1, num2, result);
 
 
+	// free memory
 	free (num1.digits);
 	free (num2.digits);
 	free (result.pint.digits);
 	free (result.pfrac_num.digits);
 	free (result.pfrac_den.digits);
+
 	return 0;
 }
 
 
 
-// divide two numbers by the standard algorithm on the digits
+// divide two numbers
 // also check the result by casting out nines
 
 // INPUT: 2 numbers
-// OUTPUT: 1 mixed number, result of the division (the integer represents the quotient and the simple fraction represents the remainder)
-//         "correct" if the cast out 9 test is passed, "wrong" otherwise
+// OUTPUT: the steps of the operation
+//         1 mixed number, result of the operation *//         the remainders by 9
+//         the result of casting out nines ("correct" or "wrong")
+
+// * the integer represents the quotient and the simple fraction represents the remainder
+//   the fraction is not simplified to better show who is the remainder of the division
 
 
 
 // examples
+
 
 // 365 / 2 = 1/2 182
 
