@@ -198,7 +198,7 @@ struct mixedNUMBER mult (struct MIXNUM mix1, struct MIXNUM mix2) {
 	}
 
 	// merge denominators in one array
-	int* denvec_all = calloc (L, sizeof(int));
+	int* denvec_all = calloc (L+1, sizeof(int));
 	int c = 0; // counter for denvec_all
 	for (int j = 0; j < mix1.mFN; j++) {
 		for (int i = 0; i < mix1.pfrac[j].length; i++) {
@@ -318,7 +318,6 @@ int main (void) {
 
 
 // 1/4;1/3|15 x 1/6;1/5|26 = 1,7,8/4,9,10|410
-//                        (= 1,2,2,0,1,2/2,3,5,2,2,3|410)
 
 // 2/9;3/5|16 x 2/11;5/8|27 = 3,8,4,8/4,9,10,11|467
 
