@@ -571,7 +571,7 @@ int* simple_den (int* denvec) { // beautify the denominators of a multiple fract
 
 	// initialize variables
 	int l = length_vec (denvec);
-	int* denvec_new = calloc (l, sizeof(int));
+	int* denvec_new = calloc (l+1, sizeof(int));
 	int j = 0; // counter for denvec_new
 
 
