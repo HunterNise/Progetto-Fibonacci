@@ -1,111 +1,103 @@
 #include "../../mylib.h"
 
 
-void mask (struct FRACTION frac1, struct FRACTION frac2, char s) {
+void mask (struct FRACTION frac1, struct FRACTION frac2, char s) { // output "frac1 ? frac2 = ", where ? can be '+', '-' or '/'
 	printf ("\n");
-	print_FRACTION (frac1);
-	printf (" %c ", s);
-	print_FRACTION (frac2);
-	printf (" = ");
+	print_FRACTION (frac1);   printf (" %c ", s);   print_FRACTION (frac2);   printf (" = ");
 }
 
-void op_v1 (struct FRACTION frac1, struct FRACTION frac2) {
-	int a1 = frac1.num, b1 = frac1.den;
-	int a2 = frac2.num, b2 = frac2.den;
-	
+void op_v1 (struct FRACTION frac1, struct FRACTION frac2) { // first algorithm
+	// initialize variables
+	int a1 = frac1.num, b1 = frac1.den,	    a2 = frac2.num, b2 = frac2.den;
+
+	// calculate relevant quantities
 	int m = mcm (b1, b2);
-	int N1 = (m / b1) * a1, 	    N2 = (m / b2) * a2;
-	
+	int N1 = (m / b1) * a1,	    N2 = (m / b2) * a2;
+
+
 	struct FRACTION result;
-	
+
 	// addition
 	result.num = N1 + N2;
 	result.den = m;
 	simplify (&result);
-	mask (frac1, frac2, '+');
-	print_FRACTION (result);
-	
+		mask (frac1, frac2, '+');		print_FRACTION (result);
+
 	// subtraction
 	if (N1 >= N2) { // negative numbers are not contemplated
 		result.num = N1 - N2;
 		result.den = m;
 		simplify (&result);
-		mask (frac1, frac2, '-');
-		print_FRACTION (result);
+			mask (frac1, frac2, '-');	print_FRACTION (result);
 	}
 	else {
 		result.num = N2 - N1;
 		result.den = m;
 		simplify (&result);
-		mask (frac2, frac1, '-');
-		print_FRACTION (result);
+			mask (frac2, frac1, '-');	print_FRACTION (result);
 	}
-	
+
 	// division
 	result.num = N1;
 	result.den = N2;
 	simplify (&result);
-	mask (frac1, frac2, '/');
-	print_FRACTION (result);
-	
+		mask (frac1, frac2, '/');		print_FRACTION (result);
+
 	result.num = N2;
 	result.den = N1;
 	simplify (&result);
-	mask (frac2, frac1, '/');
-	print_FRACTION (result);
+		mask (frac2, frac1, '/');		print_FRACTION (result);
 }
 
-void op_v2 (struct FRACTION frac1, struct FRACTION frac2) {
-	int a1 = frac1.num, b1 = frac1.den;
-	int a2 = frac2.num, b2 = frac2.den;
-	
-	int d = MCD (b1, b2), m = mcm (b1, b2);
-	int N1 = a1 * (b2 / d), 	    N2 = a2 * (b1 / d);
-		
-	
+void op_v2 (struct FRACTION frac1, struct FRACTION frac2) { // second algorithm
+	// initialize variables
+	int a1 = frac1.num, b1 = frac1.den,	    a2 = frac2.num, b2 = frac2.den;
+
+	// calculate relevant quantities
+	int d = MCD (b1, b2),	    m = mcm (b1, b2);
+	int N1 = a1 * (b2 / d),	    N2 = a2 * (b1 / d);
+
+
 	struct mixedNUMBER result;
-	
+
 	// addition
 	result = mix_div (N1 + N2, m);
-	mask (frac1, frac2, '+');
-	print_mixedNUMBER (result);
-	
+		mask (frac1, frac2, '+');		print_mixedNUMBER (result);
+
 	// subtraction
 	if (N1 >= N2) { // negative numbers are not contemplated
 		result = mix_div (N1 - N2, m);
-		mask (frac1, frac2, '-');
-		print_mixedNUMBER (result);
+			mask (frac1, frac2, '-');	print_mixedNUMBER (result);
 	}
 	else {
 		result = mix_div (N2 - N1, m);
-		mask (frac2, frac1, '-');
-		print_mixedNUMBER (result);
+			mask (frac2, frac1, '-');	print_mixedNUMBER (result);
 	}
-	
+
 	// division
 	result = mix_div (N1, N2);
-	mask (frac1, frac2, '/');
-	print_mixedNUMBER (result);
-	
+		mask (frac1, frac2, '/');		print_mixedNUMBER (result);
+
 	result = mix_div (N2, N1);
-	mask (frac2, frac1, '/');
-	print_mixedNUMBER (result);
+		mask (frac2, frac1, '/');		print_mixedNUMBER (result);
 }
 
 
 int main (void) {
+	// initialize variables
 	int a1, b1, a2, b2;
 	struct FRACTION frac1, frac2;
-	
-	scanf ("%d %d", &a1, &b1);
-	scanf ("%d %d", &a2, &b2);
+
+	scanf ("%d%d", &a1, &b1);
+	scanf ("%d%d", &a2, &b2);
 	frac1 = init_FRACTION (a1, b1);
 	frac2 = init_FRACTION (a2, b2);
-	
+
+	// call functions and output
 	op_v1 (frac1, frac2);
 	printf ("\n");
 	op_v2 (frac1, frac2);
-	
+
 	return 0;
 }
 
@@ -123,9 +115,11 @@ int main (void) {
 
 
 // 1/3 + 1/4 = 7/12
+//          (= 1,3/2,6)
 
 // 1/3 - 1/4 = 1/12
 //           = 1,0/3,4
+//          (= 1,0/2,6)
 
 // 1/3 / 1/4 = 1/3|1
 //           = 4/3
@@ -139,7 +133,7 @@ int main (void) {
 // 4/5 - 2/3 = 2,0/3,5
 //           = 2/15
 
-// 4/5 / 2/3 = 1/15|1
+// 4/5 / 2/3 = 1/5|1
 
 // 2/3 / 4/5 = 5/6
 
