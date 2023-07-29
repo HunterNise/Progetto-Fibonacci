@@ -25,10 +25,11 @@ struct NUMBER subtraction (struct NUMBER num1, struct NUMBER num2) {
 	for (int k = 0; k < lmax; k++) {
 		c1 = (k < l1) ? num1.digits[k] : 0 ; // check if it's within the boundaries of the array
 		c2 = (k < l2) ? num2.digits[k] : 0 ;
+		c2 += carry;
 
 		borrow = (c1 < c2) ? 1 : 0; // check if borrow is needed
-		s = (c1 + borrow*10) - (c2 + carry);
-			printf ("%d - %d = %d\n", c1 + borrow*10, c2 + carry, s);
+		s = (c1 + borrow*10) - c2 ;
+			printf ("%d - %d = %d\n", c1 + borrow*10, c2, s);
 
 		d[k] = get_last_digit (s);
 		carry = borrow;
