@@ -12,4 +12,4 @@ It is also available a [repl](https://replit.com/@HunterNise/Progetto-Fibonacci?
 
 ---
 
-The code consist of: a library (_mylib.h_) that contains all the general purpose functions and the custom structures needed; the various programs splitted by the chapter the appear in the _Liber_.
+The code consist of: a library (_mylib.h_) that contains all the general purpose functions and the custom structures needed; the various programs, splitted according to the chapter they appear in the _Liber_; a report (_relazione.pdf_) on the project (in italian).
