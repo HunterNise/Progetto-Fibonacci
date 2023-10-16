@@ -10,7 +10,7 @@ Building on the previous one, the goal of this project is to collect some of the
 
 The code needs to be downloaded, compiled (a C compiler is necessary) and executed on your machine.
 
-It is also available a [repl](https://replit.com/@HunterNise/Progetto-Fibonacci?v=1) that does not require to download anything: just follow the instructions in the readme to execute the desired program directly on the browser.
+It is also available a [repl](https://replit.com/@HunterNise/Progetto-Fibonacci?v=1) that does not require to download anything: just follow the instructions in the readme ("README.md") to execute the desired program directly on the browser (you may need to click the button < > "Show code" to see the files).
 
 <br />
 
@@ -28,7 +28,7 @@ Basandosi sul precedente, l'obbiettivo di questo progetto è raccogliere alcuni 
 
 Il codice deve essere scaricato, compilato (è necessario un compilatore per C) ed eseguito sulla propria macchina.
 
-È anche disponibile un [repl](https://replit.com/@HunterNise/Progetto-Fibonacci?v=1) che non richiede di scaricare niente: basta seguire le istruzioni nel readme per eseguire il programma desiderato direttamente sul browser.
+È anche disponibile un [repl](https://replit.com/@HunterNise/Progetto-Fibonacci?v=1) che non richiede di scaricare niente: basta seguire le istruzioni nel readme ("README.md") per eseguire il programma desiderato direttamente sul browser (potresti dovere cliccare il tasto < > "Show code" per vedere i file).
 
 <br />
 
